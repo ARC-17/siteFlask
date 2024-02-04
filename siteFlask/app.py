@@ -13,9 +13,9 @@ def ir_get():
 @app.route("/receber/", methods=['GET','POST'])
 def receber():
     if request.method == 'GET':
-        return "Estou no tipo GET!", 200
+        return "Estou no tipo GET!<br>Nome: {} <br>Idade: {}".format(request.args.get("nome"),request.args.get("idade")), 200
     elif request.method == "POST":
-        return "Estou no tipo POST!", 200
+        return "Estou no tipo POST!<br>Nome: {} <br>Idade: {}".format(request.form["nome"],request.form["idade"]), 200
 @app.route("/tipopost")
 def ir_post():
     return render_template("post.html"), 200
