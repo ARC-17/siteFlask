@@ -1,7 +1,7 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect
 
 app = Flask("projeto")
-
+app.secret_key = 'Minha_chave'
 @app.route("/")
 def ola_mundo():
     return render_template("index.html", meu_nome="ARC-17"), 200
@@ -24,5 +24,29 @@ def ir_post():
 @app.route("/informacao/<nome>/<idade>")
 def info(nome = None,idade = None):
     return u"Nome: {}<br>Idade: {}".format(nome,idade), 200
+@app.route("/sessao/")
+def acesso_sessao():
+    return '''
+        <h1>inicio da Sessão</h1>
+        <form action="{}" method="post" >
+            Usuário: <input type="text" name="usuario"/>
+            <br/>
+            <input type="submit" value="Acesso restrito"/>
+        </form>
+    '''.format(url_for('validacao_sessao')), 200
+
+@app.route("/validacao/", methods=['POST'])
+def validacao_sessao():
+    if request.method == "POST":
+        session['usuario'] = request.form["usuario"]
+        return redirect(url_for('acesso_restrito'))
+
+    return redirect(url_for('acesso_sessao'))
+@app.route("/restrito/")
+def acesso_restrito():
+    if ( session['usuario'] ):
+        return "Estou na área de acesso restrito!", 200
+
+    return redirect(url_for('acesso_sessao'))
 
 app.run()
